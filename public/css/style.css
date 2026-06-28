@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+.samping {
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.samping.buka { transform: translateX(0); }
+@media (min-width: 1024px) {
+  .samping { transform: translateX(0); position: static; }
+}
+.pesan {
+  max-width: 85%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+#pratinjauGambar img {
+  border-radius: 8px;
+  object-fit: cover;
+}
+#kotakPesan, #daftarRiwayat {
+  scrollbar-width: thin;
+  scrollbar-color: #165DFF transparent;
+}
+#kotakPesan::-webkit-scrollbar, #daftarRiwayat::-webkit-scrollbar { width: 6px; }
+#kotakPesan::-webkit-scrollbar-thumb, #daftarRiwayat::-webkit-scrollbar-thumb {
+  background: #165DFF; border-radius: 3px;
+}
+.sedang-merekam {
+  background: rgba(239, 68, 68, 0.1); color: #ef4444;
+  animation: denyut 1s infinite;
+}
+@keyframes denyut {
+  0%,100% { opacity:1; } 50% { opacity:0.6; }
+}
+.latar-gradasi {
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+}
+.dark .latar-gradasi {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+.kotak-kaca {
+  background: rgba(255,255,255,0.8); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.dark .kotak-kaca { background: rgba(31,41,55,0.8); }
+.input-kustom { transition: all 0.3s ease; }
+.input-kustom:focus { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,93,255,0.15); }
+button, a { -webkit-tap-highlight-color: transparent; }
+a { text-decoration: none; }
