@@ -10,14 +10,10 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Wajib ada, kalau kosong langsung rusak
-const OR_KEY = process.env.OR_KEY || "";
-const SUPABASE_URL = process.env.SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.SUPABASE_KEY || "";
-
-if (!OR_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("❌ Variabel lingkungan belum diisi lengkap!");
-}
+// 🔑 Kunci API yang baru kamu berikan
+const OR_KEY = "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";
+const SUPABASE_URL = "https://safwstugkkfpnfbabakw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_3MQCz-f8AvoiBOtCfRY0PQ_ASRpiVav";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const unggah = multer({ storage: multer.memoryStorage() });
@@ -42,8 +38,7 @@ app.get('/chat', async (req, res) => {
   try {
     const { data } = await supabase.from('users').select('id').eq('id', Number(req.cookies.user_id)).single();
     data ? res.sendFile(path.join(__dirname, 'public/chat.html')) : res.clearCookie('user_id').redirect('/login');
-  } catch (err) {
-    console.error("Kesalahan ambil pengguna:", err.message);
+  } catch {
     res.clearCookie('user_id').redirect('/login');
   }
 });
@@ -58,9 +53,8 @@ app.post('/register', async (req, res) => {
     const { error } = await supabase.from('users').insert([{ username, email, password: hash }]);
     if (error) return res.send('<script>alert("Nama atau email sudah terpakai!");history.back();</script>');
     res.redirect('/login');
-  } catch (err) {
-    console.error("Kesalahan daftar:", err.message);
-    res.send('<script>alert("Kesalahan sistem!");history.back();</script>');
+  } catch {
+    res.send('<script>alert("Kesalahan saat mendaftar!");history.back();</script>');
   }
 });
 
@@ -75,9 +69,8 @@ app.post('/login', async (req, res) => {
       maxAge: 86400000, secure: true, httpOnly: true, sameSite: 'lax' 
     });
     res.redirect('/chat');
-  } catch (err) {
-    console.error("Kesalahan masuk:", err.message);
-    res.send('<script>alert("Kesalahan sistem!");history.back();</script>');
+  } catch {
+    res.send('<script>alert("Kesalahan saat masuk!");history.back();</script>');
   }
 });
 
@@ -90,45 +83,31 @@ app.post('/api/simpan-riwayat', unggah.none(), async (req, res) => {
       user_id: Number(req.cookies.user_id), judul, pesan, gambar, jawaban 
     }]);
     res.json({ ok: true });
-  } catch (err) { 
-    console.error("Kesalahan simpan riwayat:", err.message);
-    res.json({ ok: false }); 
-  }
+  } catch { res.json({ ok: false }); }
 });
 
 app.get('/api/daftar-riwayat', async (req, res) => {
   if (!req.cookies.user_id) return res.json([]);
-  try {
-    const { data } = await supabase.from('riwayat')
-      .select('id, judul, dibuat')
-      .eq('user_id', Number(req.cookies.user_id))
-      .order('dibuat', { ascending: false });
-    res.json(data || []);
-  } catch (err) {
-    console.error("Kesalahan ambil riwayat:", err.message);
-    res.json([]);
-  }
+  const { data } = await supabase.from('riwayat')
+    .select('id, judul, dibuat')
+    .eq('user_id', Number(req.cookies.user_id))
+    .order('dibuat', { ascending: false });
+  res.json(data || []);
 });
 
 app.get('/api/baca-riwayat/:id', async (req, res) => {
   if (!req.cookies.user_id) return res.json(null);
-  try {
-    const { data } = await supabase.from('riwayat')
-      .select('pesan, gambar, jawaban')
-      .eq('id', req.params.id)
-      .eq('user_id', Number(req.cookies.user_id))
-      .single();
-    res.json(data || null);
-  } catch (err) {
-    console.error("Kesalahan baca riwayat:", err.message);
-    res.json(null);
-  }
+  const { data } = await supabase.from('riwayat')
+    .select('pesan, gambar, jawaban')
+    .eq('id', req.params.id)
+    .eq('user_id', Number(req.cookies.user_id))
+    .single();
+  res.json(data || null);
 });
 
-// --- AI QWEN ---
+// --- PANGGIL AI QWEN ---
 app.post('/api/chat', unggah.single('gambar'), async (req, res) => {
   if (!req.cookies.user_id) return res.json({ jawaban: "Silakan masuk dulu!" });
-  if (!OR_KEY) return res.json({ jawaban: "⚠️ Kunci API belum diatur di pengaturan!" });
 
   const teks = req.body.pesan || '';
   let konten = [];
@@ -152,7 +131,7 @@ app.post('/api/chat', unggah.single('gambar'), async (req, res) => {
       headers: {
         "Authorization": `Bearer ${OR_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://kpaca-uu.vercel.app", // ✅ Tanda titik benar, bukan vercell
+        "HTTP-Referer": "https://kpaca-uu.vercel.app",
         "X-Title": "KPACA AI"
       },
       body: JSON.stringify({
@@ -172,18 +151,18 @@ app.post('/api/chat', unggah.single('gambar'), async (req, res) => {
 
     res.json({ jawaban: hasil.choices[0].message.content.trim() });
 
-  } catch (err) { 
-    console.error("Kesalahan AI:", err.message);
-    res.json({ jawaban: "❌ Kesalahan: " + err.message }); 
+  } catch (e) { 
+    res.json({ jawaban: "Kesalahan: " + e.message }); 
   }
 });
 
 app.get('/logout', (req, res) => { res.clearCookie('user_id'); res.redirect('/'); });
 
-// ✅ Wajib untuk Vercel, jangan dihapus
+// ✅ Wajib ada supaya Vercel berjalan
 module.exports = app;
 
-// Hanya jalankan server jika dijalankan di lokal
+// Hanya berjalan jika dijalankan di komputer sendiri
 if (require.main === module) {
   app.listen(PORT, () => console.log("✅ Berjalan di port", PORT));
 }
+        
