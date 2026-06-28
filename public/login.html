@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk - KPACA AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script>tailwind.config = { theme: { extend: { colors: { utama:'#165DFF' } } } }</script>
+</head>
+<body class="latar-gradasi min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full kotak-kaca p-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-utama">KPACA AI</h1>
+      <p class="text-gray-600 dark:text-gray-300 mt-2">Masuk ke akun Anda</p>
+    </div>
+    <form action="/login" method="POST" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Pengguna</label>
+        <input type="text" name="username" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg input-kustom focus:outline-none focus:ring-2 focus:ring-utama">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kata Sandi</label>
+        <input type="password" name="password" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg input-kustom focus:outline-none focus:ring-2 focus:ring-utama">
+      </div>
+      <button type="submit" class="w-full bg-utama hover:bg-utama/90 text-white py-2.5 rounded-lg font-medium transition">Masuk</button>
+    </form>
+    <p class="text-center mt-6 text-sm text-gray-600 dark:text-gray-300">Belum punya akun? <a href="/register" class="text-utama hover:underline">Daftar di sini</a></p>
+    <p class="text-center mt-2 text-sm"><a href="/" class="text-gray-500 hover:underline">← Kembali ke Beranda</a></p>
+  </div>
+</body>
+</html>
