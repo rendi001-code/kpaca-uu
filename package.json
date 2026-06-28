@@ -1,0 +1,20 @@
+{
+  "name": "kpaca-ai",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "body-parser": "^1.20.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "node-fetch": "^2.7.0",
+    "multer": "^1.4.5-lts.1",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
